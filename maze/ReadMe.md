@@ -21,7 +21,9 @@ Environment consists of (6 x 6) tiles and 2 black holes (agent start from most t
 
 # Agent
 Agent has two methods:
+
  1- choose_action to choose action based on state (s)
+
  2- learn based on (s: current state, a: current action, r: current reward, s_: next state)
 
 # App
