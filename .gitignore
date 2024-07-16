@@ -117,3 +117,5 @@ media/
 # !**/migrations
 # !**/migrations/__init__.py
 /.venv
+/venv.3.11.2/
+/venv.3.12/

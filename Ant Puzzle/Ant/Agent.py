@@ -17,6 +17,7 @@ class Agent:
     def move(self, fermion_value: np.ndarray):
         max_fermion_indices = np.unravel_index(fermion_value.argmax(), fermion_value.shape)
         if max_fermion_indices != (1,1):
+            pass
 
     def __move_up(self):
         new_y = self.__coordinate[1] - 1
