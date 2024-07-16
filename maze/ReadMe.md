@@ -6,11 +6,13 @@
 
 # Environment
 Maze environment has a method to return state reward based on each action (a)
+Environment consists of (6 x 6) tiles and 2 black holes (agent start from most top-right cell and agent would avoid holes)
 
 ![maze.PNG](maze.PNG)
 
 ## States
- tiles (6*6) (two black holse) (agent start from most top-right cell and agent would avoid holes)
+  States consist of the coordination of each tile in the board
+
 ## Actions
  Agent can move in 4 directions: (**L**)eft, (**R**)ight, (**U**)p, (**D**)ow, therefore actions consist of [L, R, U, D]
 ## Reward
