@@ -9,7 +9,7 @@ class Market:
         self.__window_size = windows_size
         self.__states = None
         self.__data: list = DataReader.read_data(ticker)
-        self.__action = ['hold', 'buy', 'sell']
+        self.__actions = ['hold', 'buy', 'sell']
         self.__index = -1
         self.__last_data_index = len(self.__data) - 1
 
@@ -54,3 +54,7 @@ class Market:
         done = True if self.__index == self.__last_data_index - 1 else False
 
         return next_state, next_price_data, reward, done
+
+    @property
+    def actions(self):
+        return self.__actions
