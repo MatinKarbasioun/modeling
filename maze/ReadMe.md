@@ -22,9 +22,9 @@ Environment consists of (6 x 6) tiles and 2 black holes (agent start from most t
 # Agent
 Agent has two methods:
 
- 1- choose_action to choose action based on state (s)
+ 1- choose_action to choose an action based on the current state (s)
 
- 2- learn based on (s: current state, a: current action, r: current reward, s_: next state)
+ 2- learn based on (the current state, the current action, the immediate reward, and the next state)
 
 # App
 App.py handle the interactions between agent and perform action on the environment and then get reward and then choose new action
