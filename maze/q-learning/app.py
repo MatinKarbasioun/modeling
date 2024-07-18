@@ -1,3 +1,5 @@
+import time
+
 from environment import Environment
 from agent import Agent
 
@@ -18,6 +20,7 @@ class App:
         self.__agent = Agent(actions=list(range(self.__environment.action_num)))
 
     def run_experiment(self):
+        start_time = time.time()
         for episode in self.__episodes:
             print(f"Episode {episode}/{self.__episode_count}")
             observation = self.__environment.reset()
@@ -37,8 +40,8 @@ class App:
                     self.__rewards.append(reward)
                     print(f"Reward: {reward}, Moves: {moves}")
                     break
-
-        print("Game over!")
+        end_time = time.time()
+        print(f"Game over in {end_time-start_time} seconds!")
         self.__plot_reward_movement()
 
     def start(self):

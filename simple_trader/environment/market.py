@@ -7,8 +7,8 @@ class Market:
     def __init__(self, windows_size, ticker):
         self.__ticker = ticker
         self.__window_size = windows_size
-        self.__states = None
         self.__data: list = DataReader.read_data(ticker)
+        self.__states = self.__data_preprocess()
         self.__actions = ['hold', 'buy', 'sell']
         self.__index = -1
         self.__last_data_index = len(self.__data) - 1
@@ -23,7 +23,7 @@ class Market:
         return pre_processed_data
 
     def __get_state(self, current_data_index):
-        start_index = current_data_index - self.__window_size + 2
+        start_index = current_data_index - self.__window_size
         data_block = self.__data[start_index: current_data_index + 1] if start_index >= 0 else (
                 -start_index * [self.__data[0]] + self.__data[0: current_data_index + 1])
         result = []
@@ -58,3 +58,11 @@ class Market:
     @property
     def actions(self):
         return self.__actions
+
+    @property
+    def last_data_index(self):
+        return self.__last_data_index
+
+    @property
+    def data(self):
+        return self.__data

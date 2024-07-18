@@ -8,8 +8,8 @@ from collections import deque
 
 
 class Trader:
-    def __init__(self, action_size, windows_size, is_eval=False, model_name=""):
-        self.__windows_size = windows_size
+    def __init__(self, state_size, action_size, is_eval=False, model_name=""):
+        self.__state_size = state_size
         self.__is_eval = is_eval
         self.__model_name = model_name
 
@@ -18,33 +18,32 @@ class Trader:
         self.__action_history = []
         self.__action_size = action_size
 
-        self.__memory = deque(maxlen=1000)
+        self.memory = deque(maxlen=1000)
 
         # Hyperparameters
         self.__gamma = 0.95
         self.__epsilon = 1.0
         self.__epsilon_min = 0.01
         self.__epsilon_decay = 0.995
+        self.__learning_rate = 0.001
 
         # Model
-        self.__model: models.Sequential = models.load_model(
+        self.model: models.Sequential = models.load_model(
             "models/" + model_name) if is_eval else self.__create_model()
-
-        self.__learning_rate = 0.001
 
     def __create_model(self):
         model = models.Sequential()
 
         # input layer
-        model.add(layers.Dense(units=32, input_dim=self.__windows_size, activation='relu'))
+        model.add(layers.Dense(units=32, input_dim=self.__state_size, activation='relu'))
 
         # hidden layer
         model.add(layers.Dense(units=8, activation='relu'))
 
         # output layer
-        model.add(layers.Dense(units=self.__action_size, input_dim=self.__windows_size, activation='linear'))
+        model.add(layers.Dense(units=self.__action_size, activation='linear'))
 
-        model.compile(loss='mse', optimizer=optimizers.Adam(lr=self.__learning_rate))
+        model.compile(loss='mse', optimizer=optimizers.Adam(learning_rate=self.__learning_rate))
         return model
 
     def reset(self):  # reset agent after each episode
@@ -52,7 +51,7 @@ class Trader:
         self.__total_profit = 0
         self.__action_history = []
 
-    def get_action(self, current_state, price_data):
+    def decision(self, current_state, price_data):
 
         """
             if our action is the buy, we add price in inventory to calculate profit later; otherwise,
@@ -63,7 +62,7 @@ class Trader:
             action = random.randrange(self.__action_size)
 
         else:
-            prediction_of_actions = self.__model.predict(current_state)  # return probability of each action
+            prediction_of_actions = self.model.predict(current_state)  # return probability of each action
             action = np.argmax(prediction_of_actions[0])
 
         bought_price = None  # just return in sell of position
@@ -105,10 +104,10 @@ class Trader:
 
     def experience_replay(self, batch_size):
         mini_batch = []  # create mini batch to store state-action from previous and create mini-batch from memory
-        memory_length = len(self.__memory)
+        memory_length = len(self.memory)
 
         for i in range(memory_length - batch_size + 1, memory_length):
-            mini_batch.append(self.__memory[i])
+            mini_batch.append(self.memory[i])
 
         for state, action, reward, next_state, done in mini_batch:
             if done:
@@ -116,16 +115,20 @@ class Trader:
 
             else:
                 # find Q-value for the next state
-                next_q_values = self.__model.predict(next_state)[0]
+                next_q_values = self.model.predict(next_state)[0]
                 target = reward + self.__gamma * np.amax(next_q_values)  # bellman equation
 
-            predicated_target = self.__model.predict(state)
+            predicated_target = self.model.predict(state)
 
             # update action-value
             predicated_target[0][action] = target
 
             # update model input --> state | output --> predicted_target
-            self.__model.fit(state, predicated_target, epochs=1, verbose=0)
+            self.model.fit(state, predicated_target, epochs=1, verbose=0)
 
         if self.__epsilon > self.__epsilon_min:  # by going to lower epsilon use predicted instead random action
             self.__epsilon *= self.__epsilon_decay
+
+    @property
+    def action_history(self):
+        return self.__action_history

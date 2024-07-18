@@ -4,8 +4,8 @@ import time
 import sys
 
 UNIT = 40
-MAZE_H = 6
-MAZE_W = 6
+MAZE_H = 8
+MAZE_W = 8
 
 
 class Environment:
